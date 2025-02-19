@@ -4,8 +4,6 @@ import aiohttp
 import requests
 import numpy as np
 from scipy.stats import ttest_ind
-import csv
-import matplotlib.pyplot as plt
 
 async def requisicao_api(session, url):
     inicio = time.time()
@@ -33,24 +31,6 @@ def teste_hipoteses(tempos_api1, tempos_api2, alpha):
     else:
         print("Não rejeitamos a hipótese nula. Não há evidência de diferença significativa entre os tempos de resposta.")
 
-def salvar_resultados_csv(tempos_api1, tempos_api2, nome_arquivo):
-    with open(nome_arquivo, 'w', newline='') as arquivo_csv:
-        writer = csv.writer(arquivo_csv)
-        writer.writerow(['API', 'Tempo de Resposta'])
-        for tempo in tempos_api1:
-            writer.writerow(['API 1', tempo])
-        for tempo in tempos_api2:
-            writer.writerow(['API 2', tempo])
-
-def gerar_grafico(tempos_api1, tempos_api2, nome_arquivo):
-    plt.plot(tempos_api1, label='API com Corrotina')
-    plt.plot(tempos_api2, label='API com Thread')
-    plt.xlabel('Requisição')
-    plt.ylabel('Tempo de Resposta (s)')
-    plt.title('Comparação de Tempos de Resposta das APIs')
-    plt.legend()
-    plt.savefig(nome_arquivo)
-
 if __name__ == '__main__':
     url_api1 = 'http://127.0.0.1:5001/api/pow'  # URL da API com corrotina
     url_api2 = 'http://127.0.0.1:5002/api/pow'  # URL da API com thread
@@ -68,11 +48,3 @@ if __name__ == '__main__':
     print(f"Tempos de resposta API 2: {tempos_api2}")
 
     teste_hipoteses(tempos_api1, tempos_api2, alpha)
-
-    nome_arquivo_csv = 'tempos_resposta.csv'
-    salvar_resultados_csv(tempos_api1, tempos_api2, nome_arquivo_csv)
-    print(f"Resultados salvos em {nome_arquivo_csv}")
-
-    nome_arquivo_grafico = 'grafico_tempos_resposta.png'
-    gerar_grafico(tempos_api1, tempos_api2, nome_arquivo_grafico)
-    print(f"Gráfico salvo em {nome_arquivo_grafico}")
